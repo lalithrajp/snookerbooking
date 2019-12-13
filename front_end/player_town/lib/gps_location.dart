@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+//import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 void main() => runApp(GPSLocation());
 
@@ -11,13 +10,13 @@ class GPSLocation extends StatefulWidget {
 }
 
 class _GPSLocationState extends State<GPSLocation> {
-  GoogleMapController mapController;
+  //GoogleMapController mapController;
 
-  final LatLng _center = const LatLng(45.521563, -122.677433);
+  //final LatLng _center = const LatLng(45.521563, -122.677433);
 
-  void _onMapCreated(GoogleMapController controller) {
-    mapController = controller;
-  }
+  //void _onMapCreated(GoogleMapController controller) {
+  //mapController = controller;
+  //}
 
   @override
   Widget build(BuildContext context) {
@@ -29,13 +28,13 @@ class _GPSLocationState extends State<GPSLocation> {
         ),
         body: Column(
           children: <Widget>[
-            GoogleMap(
-              onMapCreated: _onMapCreated,
-              initialCameraPosition: CameraPosition(
-                target: _center,
-                zoom: 11.0,
-              ),
-            ),
+            //      GoogleMap(
+            //        onMapCreated: _onMapCreated,
+            //        initialCameraPosition: CameraPosition(
+            //          target: _center,
+            //          zoom: 11.0,
+            //        ),
+            //      ),
         RaisedButton(
       child:
       Text('GPS Location'),

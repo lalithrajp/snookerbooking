@@ -3,6 +3,7 @@ import 'board_details.dart';
 import 'owner_details.dart';
 import 'parlour_details.dart';
 import 'api_requests.dart';
+import 'pre_board.dart';
 
 APIRequests request = APIRequests();
 
@@ -65,8 +66,6 @@ class _SignupScreenState extends State<SignupScreen>  with AutomaticKeepAliveCli
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> _columns = new List.generate(
-        no_of_boards, (int i) => new Board(boardNumber: no_of_boards));
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: SafeArea(
@@ -76,124 +75,13 @@ class _SignupScreenState extends State<SignupScreen>  with AutomaticKeepAliveCli
           children: <Widget>[
             OwnerDetails(),
             ParlourDetails(),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              //crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Text(
-                  'No of boards',
-                  style: TextStyle(
-                    fontSize: 35.0,
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-                Text(
-                  no_of_boards_temp.toString(),
-                  style: TextStyle(
-                    fontSize: 65.0,
-                    fontWeight: FontWeight.w300,
-                  ),
-                ),
-                Slider(
-                  value: no_of_boards_temp.toDouble(),
-                  min: 1.0,
-                  max: 15.0,
-                  activeColor: Color(0xFFEB1555),
-                  inactiveColor: Color(0xFF8D8E98),
-                  onChanged: (double newValue) {
-                    setState(() {
-                      no_of_boards_temp = newValue.round();
-                    });
-                  },
-                ),
-                RaisedButton(
-                    child: Text('Confirm'),
-                    shape: ,
-                    onPressed: () {
-                      setState(() {
-                        no_of_boards = no_of_boards_temp;
-                        //BoardDetails(noOfBoards: no_of_boards);
-                        //Navigator.pushNamed(context, '/board');
-                        print('Visited here');
-                        _controller.nextPage(duration: kTabScrollDuration, curve: Curves.ease);
-                      });
+            PreBoard()
 
-                      // Navigate to the second screen using a named route.
-                      //  Navigator.pushNamed(context, '/signup');
-                    }),
-              ],
-            ),
-        Container(
-          margin: EdgeInsets.only(bottom: 200.0),
-          height: 200.0,
-          child:ListView(
-              //scrollDirection: Axis.horizontal,
-            //child: Wrap(
-                    //child: Column(
-                    children: _columns
-            //),
-          ),),
-            RaisedButton(
-                child: Text('Confirm'),
-                onPressed: () {
-                  setState(() {
-                    var response = sendDataToServer();
-                    Navigator.pop(context, response);
-                  });
-
-                }),
           ],
         ),
 
       ),
     );
-  }
-  Future<String> sendDataToServer() async{
-    String url =
-        'https://virtserver.swaggerhub.com/SacredMinds/SnookerBooker/1.0.0/parlour';
-    Map map = {
-      'data': {
-        "parlourName": "Frames Parlour,Snooker Den",
-        "description": "Parlour description",
-        "mailId": "string",
-        "phoneNo": "string",
-        "location": {
-          "locationId": 0,
-          "addressLine1": "string",
-          "addressLine2": "string",
-          "city": "string",
-          "state": "string",
-          "gps": {
-            "latitude": 0,
-            "longitude": 0
-          }
-        },
-        "owner": {
-          "firstName": "string",
-          "lastName": "string",
-          "email": "string",
-          "phoneNo": "string"
-        },
-        "boards": [
-          {
-            "category": 0,
-            "pricePerHour": 0,
-            "name": "Board1,Board2",
-            "description": "Description about the board",
-            "photoUrls": [
-              "string"
-            ]
-          }
-        ],
-        "tags": [
-          {
-            "id": 0,
-            "name": "English"
-          }
-        ]
-      },
-    };
-    return await request.apiPOSTRequest(url, map);
   }
 
   @override//This is to save data while scrolling through pages

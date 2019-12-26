@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'parlour_json.dart';
 //import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 void main() => runApp(GPSLocation());
 
-
 class GPSLocation extends StatefulWidget {
   @override
- _GPSLocationState createState() => _GPSLocationState();
+  _GPSLocationState createState() => _GPSLocationState();
 }
 
 class _GPSLocationState extends State<GPSLocation> {
@@ -20,6 +20,8 @@ class _GPSLocationState extends State<GPSLocation> {
 
   @override
   Widget build(BuildContext context) {
+    var _latitude = 10.2222;
+    var _longitude = 55.0000;
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -35,14 +37,14 @@ class _GPSLocationState extends State<GPSLocation> {
             //          zoom: 11.0,
             //        ),
             //      ),
-        RaisedButton(
-      child:
-      Text('GPS Location'),
-      onPressed: () async{
-        // Navigate to the second screen using a named route.
-        Navigator.pop(context, 'success');
-      },
-    ),
+            RaisedButton(
+              child: Text('GPS Location'),
+              onPressed: () async {
+                GPSJSON gpsDetails = GPSJSON(_latitude, _longitude);
+                // Navigate to the second screen using a named route.
+                Navigator.pop(context, gpsDetails);
+              },
+            ),
           ],
         ),
       ),

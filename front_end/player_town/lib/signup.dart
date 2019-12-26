@@ -26,8 +26,7 @@ class _SignupScreenState extends State<SignupScreen>{
           controller: _controller,
           children: <Widget>[
             OwnerDetails(),
-            ParlourDetails(),
-            PreBoard(),
+            //PreBoard(),
 
 
           ],

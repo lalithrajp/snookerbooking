@@ -2,13 +2,20 @@ import 'dart:io';
 
 import"package:flutter/material.dart";
 import 'package:player_town/board_info_display.dart';
+import 'package:player_town/parlour_json.dart';
 import 'api_requests.dart';
 import 'board_details.dart';
 import 'package:http/http.dart';
 
 class PreBoard extends StatefulWidget {
+  ParlourDetailsJSON parlourDetails;
+  LocationJSON locationDetails;
+
+  PreBoard(this.parlourDetails, this.locationDetails);
+
   @override
-  _PreBoardState createState() => _PreBoardState();
+  _PreBoardState createState() =>
+      _PreBoardState(parlourDetails, locationDetails);
 }
 
 class _PreBoardState extends State<PreBoard> {
@@ -20,6 +27,11 @@ class _PreBoardState extends State<PreBoard> {
   PageController _controller;
   TimeOfDay _startTime = new TimeOfDay.now();
   TimeOfDay _endTime = new TimeOfDay.now();
+
+  ParlourDetailsJSON parlourDetails;
+  LocationJSON locationDetails;
+
+  _PreBoardState(this.parlourDetails, this.locationDetails);
 
 
   Future<Null> _selectStartTime(BuildContext context) async {
@@ -58,120 +70,122 @@ class _PreBoardState extends State<PreBoard> {
   Widget build(BuildContext context) {
     List<Widget> _columns = new List.generate(
         no_of_boards, (int i) => new Board(boardNumber: no_of_boards));
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      //crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Text(
-          'Parlour Timings',
-          textAlign: TextAlign.center,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        Card(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              Text(
-                'Start Time: ${_startTime.format(context)}',
-                //textAlign: TextAlign.center,
-                //overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              //SizedBox(width: 73),
-              RaisedButton(
-                onPressed: () {
-                  _selectStartTime(context);
-                },
-                child: Text('Select Start Time'),
-              ),
-            ],
+    return Scaffold(body: SafeArea(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        //crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Text(
+            'Parlour Timings' + parlourDetails.toJson().toString() +
+                locationDetails.toJson().toString(),
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
-        ),
-        Card(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              Text(
-                'End Time: ${ _endTime.format(context)}',
-                //textAlign: TextAlign.center,
-                //overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              //SizedBox(width: 80),
-              RaisedButton(
-                onPressed: () {
-                  _selectEndTime(context);
-                },
-                child: Text('Select End Time'),
-              ),
-            ],
+          Card(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                Text(
+                  'Start Time: ${_startTime.format(context)}',
+                  //textAlign: TextAlign.center,
+                  //overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                //SizedBox(width: 73),
+                RaisedButton(
+                  onPressed: () {
+                    _selectStartTime(context);
+                  },
+                  child: Text('Select Start Time'),
+                ),
+              ],
+            ),
           ),
-        ),
+          Card(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                Text(
+                  'End Time: ${ _endTime.format(context)}',
+                  //textAlign: TextAlign.center,
+                  //overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                //SizedBox(width: 80),
+                RaisedButton(
+                  onPressed: () {
+                    _selectEndTime(context);
+                  },
+                  child: Text('Select End Time'),
+                ),
+              ],
+            ),
+          ),
 
-        Text(
-          _notValid,
-          style: TextStyle(
-            fontSize: 14.0,
-            fontWeight: FontWeight.w300,
-            color: Color(0xFFEB1555),
+          Text(
+            _notValid,
+            style: TextStyle(
+              fontSize: 14.0,
+              fontWeight: FontWeight.w300,
+              color: Color(0xFFEB1555),
+            ),
           ),
-        ),
-        SizedBox(height: 80),
-        Text(
-          'No of boards',
-          style: TextStyle(
-            fontSize: 35.0,
-            fontWeight: FontWeight.w300,
+          SizedBox(height: 80),
+          Text(
+            'No of boards',
+            style: TextStyle(
+              fontSize: 35.0,
+              fontWeight: FontWeight.w300,
+            ),
           ),
-        ),
-        Text(
-          no_of_boards_temp.toString(),
-          style: TextStyle(
-            fontSize: 65.0,
-            fontWeight: FontWeight.w300,
+          Text(
+            no_of_boards_temp.toString(),
+            style: TextStyle(
+              fontSize: 65.0,
+              fontWeight: FontWeight.w300,
+            ),
           ),
-        ),
-        Slider(
-          value: no_of_boards_temp.toDouble(),
-          min: 1.0,
-          max: 15.0,
-          activeColor: Color(0xFFEB1555),
-          inactiveColor: Color(0xFF8D8E98),
-          onChanged: (double newValue) {
-            setState(() {
-              no_of_boards_temp = newValue.round();
-            });
-          },
-        ),
-        RaisedButton(
-            child: Text('Confirm'),
-            //shape: ,
-            onPressed: () {
+          Slider(
+            value: no_of_boards_temp.toDouble(),
+            min: 1.0,
+            max: 15.0,
+            activeColor: Color(0xFFEB1555),
+            inactiveColor: Color(0xFF8D8E98),
+            onChanged: (double newValue) {
               setState(() {
-                no_of_boards = no_of_boards_temp;
-                //BoardDetails(noOfBoards: no_of_boards);
-                //Navigator.pushNamed(context, '/board');
-                print('Visited here');
-                int difference = _endTime.hour - _startTime.hour;
-                if (!(difference.isNegative) && !(difference < 1)) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => DisplayBoardInfo(no_of_boards)),
-                  );
-                  // _controller.nextPage(
-                  //     duration: kTabScrollDuration, curve: Curves.ease);
-                }
-                else {
-                  _notValid =
-                  "Timings are either less than 1 hour or invalid.";
-                }
+                no_of_boards_temp = newValue.round();
               });
+            },
+          ),
+          RaisedButton(
+              child: Text('Confirm'),
+              //shape: ,
+              onPressed: () {
+                setState(() {
+                  no_of_boards = no_of_boards_temp;
+                  //BoardDetails(noOfBoards: no_of_boards);
+                  //Navigator.pushNamed(context, '/board');
+                  print('Visited here');
+                  int difference = _endTime.hour - _startTime.hour;
+                  if (!(difference.isNegative) && !(difference < 1)) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => DisplayBoardInfo(no_of_boards)),
+                    );
+                    // _controller.nextPage(
+                    //     duration: kTabScrollDuration, curve: Curves.ease);
+                  }
+                  else {
+                    _notValid =
+                    "Timings are either less than 1 hour or invalid.";
+                  }
+                });
 
-              // Navigate to the second screen using a named route.
-              //  Navigator.pushNamed(context, '/signup');
-            }),
+                // Navigate to the second screen using a named route.
+                //  Navigator.pushNamed(context, '/signup');
+              }),
 //        Card(
 //          child: Container(
 //            //margin: EdgeInsets.only(bottom: 200.0),
@@ -197,7 +211,8 @@ class _PreBoardState extends State<PreBoard> {
 //                Navigator.popUntil(context, ModalRoute.withName('/'));
 //              });
 //            }),
-      ],
-    );
+        ],
+      ),
+    ));
   }
 }

@@ -4,6 +4,7 @@ import 'owner_details.dart';
 import 'parlour_details.dart';
 import 'api_requests.dart';
 import 'pre_board.dart';
+import 'signup.dart';
 
 APIRequests request = APIRequests();
 
@@ -47,49 +48,3 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
-
-class SignupScreen extends StatefulWidget {
-  @override
-  _SignupScreenState createState() => _SignupScreenState();
-}
-
-class _SignupScreenState extends State<SignupScreen>  with AutomaticKeepAliveClientMixin<SignupScreen>{
-  int no_of_boards = 1;
-  int no_of_boards_temp = 1;
-  PageController _controller;
-  void initState() {
-    super.initState();
-    _controller = new PageController(
-        initialPage: 0, keepPage: false, viewportFraction: 1.0);
-    //platform.setMessageHandler(changePage);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: SafeArea(
-          child: PageView(
-          scrollDirection: Axis.vertical,
-            controller: _controller,
-          children: <Widget>[
-            OwnerDetails(),
-            ParlourDetails(),
-            PreBoard()
-
-          ],
-        ),
-
-      ),
-    );
-  }
-
-  @override//This is to save data while scrolling through pages
-  bool get wantKeepAlive => true;
-}
-
-//return TextFormField(
-////autovalidate: true,
-//
-//return null;
-//},

@@ -3,26 +3,26 @@ import"board_details.dart";
 import 'package:http/http.dart';
 
 class DisplayBoardInfo extends StatefulWidget {
-  int no_of_boards;
+  int noOfBoards;
 
-  DisplayBoardInfo(this.no_of_boards);
+  DisplayBoardInfo(this.noOfBoards);
 
   @override
-  _DisplayBoardInfoState createState() => _DisplayBoardInfoState(no_of_boards);
+  _DisplayBoardInfoState createState() => _DisplayBoardInfoState(noOfBoards);
 }
 
 class _DisplayBoardInfoState extends State<DisplayBoardInfo> {
-  int no_of_boards;
+  int noOfBoards;
 
 //  List<Widget> _temp;
 //  _temp.add(Board(boardNumber: 1));
-  _DisplayBoardInfoState(this.no_of_boards) {
+  _DisplayBoardInfoState(this.noOfBoards) {
     //_createBoardInfo();
   }
 
   List<Widget>  _createBoardInfo(){
     List<Widget> _columns = new List();
-      for (int i = 1; i <no_of_boards+1; i++) {
+    for (int i = 1; i < noOfBoards + 1; i++) {
           _columns.add(new Board(boardNumber: i));
     }
       return _columns;
@@ -45,10 +45,10 @@ class _DisplayBoardInfoState extends State<DisplayBoardInfo> {
 //              },
 //              child: Text('Generate Boards'),
 //            )
-            child: Card(
+            child: LimitedBox(
               //child: Board(boardNumber: 1),
-
-              child: Column(
+              maxHeight: 700,
+              child: ListView(
                 //scrollDirection: Axis.horizontal,
                 children: _createBoardInfo(),
               ),

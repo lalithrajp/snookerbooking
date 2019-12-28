@@ -10,12 +10,13 @@ import 'package:http/http.dart';
 class PreBoard extends StatefulWidget {
   ParlourDetailsJSON parlourDetails;
   LocationJSON locationDetails;
+  OwnerDetailsJSON ownerDetails;
 
-  PreBoard(this.parlourDetails, this.locationDetails);
+  PreBoard(this.ownerDetails, this.parlourDetails, this.locationDetails);
 
   @override
   _PreBoardState createState() =>
-      _PreBoardState(parlourDetails, locationDetails);
+      _PreBoardState(ownerDetails, parlourDetails, locationDetails);
 }
 
 class _PreBoardState extends State<PreBoard> {
@@ -30,8 +31,9 @@ class _PreBoardState extends State<PreBoard> {
 
   ParlourDetailsJSON parlourDetails;
   LocationJSON locationDetails;
+  OwnerDetailsJSON ownerDetails;
 
-  _PreBoardState(this.parlourDetails, this.locationDetails);
+  _PreBoardState(this.ownerDetails, this.parlourDetails, this.locationDetails);
 
 
   Future<Null> _selectStartTime(BuildContext context) async {
@@ -67,9 +69,12 @@ class _PreBoardState extends State<PreBoard> {
     //platform.setMessageHandler(changePage);
   }
 
+
   Widget build(BuildContext context) {
     List<Widget> _columns = new List.generate(
         no_of_boards, (int i) => new Board(boardNumber: no_of_boards));
+    print(parlourDetails.toJson().toString() +
+        locationDetails.toJson().toString());
     return Scaffold(body: SafeArea(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -169,10 +174,15 @@ class _PreBoardState extends State<PreBoard> {
                   print('Visited here');
                   int difference = _endTime.hour - _startTime.hour;
                   if (!(difference.isNegative) && !(difference < 1)) {
+                    parlourDetails.startTime = _startTime.toString();
+                    parlourDetails.endTime = _endTime.toString();
+                    parlourDetails.boardCount = no_of_boards;
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => DisplayBoardInfo(no_of_boards)),
+                          builder: (context) =>
+                              DisplayBoardInfo(ownerDetails, parlourDetails,
+                                  locationDetails)),
                     );
                     // _controller.nextPage(
                     //     duration: kTabScrollDuration, curve: Curves.ease);

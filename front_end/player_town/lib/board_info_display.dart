@@ -1,31 +1,41 @@
 import"package:flutter/material.dart";
+import 'package:player_town/parlour_json.dart';
 import"board_details.dart";
 import 'package:http/http.dart';
 
 class DisplayBoardInfo extends StatefulWidget {
-  int noOfBoards;
+  ParlourDetailsJSON parlourDetails;
+  LocationJSON locationDetails;
+  OwnerDetailsJSON ownerDetails;
 
-  DisplayBoardInfo(this.noOfBoards);
+  DisplayBoardInfo(this.ownerDetails, this.parlourDetails,
+      this.locationDetails);
 
   @override
-  _DisplayBoardInfoState createState() => _DisplayBoardInfoState(noOfBoards);
+  _DisplayBoardInfoState createState() =>
+      _DisplayBoardInfoState(ownerDetails, parlourDetails, locationDetails);
 }
 
 class _DisplayBoardInfoState extends State<DisplayBoardInfo> {
-  int noOfBoards;
+  ParlourDetailsJSON parlourDetails;
+  LocationJSON locationDetails;
+  OwnerDetailsJSON ownerDetails;
+  TagsJSON _tag;
+  List<BoardJSON> boards = new List();
 
 //  List<Widget> _temp;
 //  _temp.add(Board(boardNumber: 1));
-  _DisplayBoardInfoState(this.noOfBoards) {
-    //_createBoardInfo();
-  }
+  _DisplayBoardInfoState(this.ownerDetails, this.parlourDetails,
+      this.locationDetails);
 
   List<Widget>  _createBoardInfo(){
+    int noOfBoards = parlourDetails.boardCount;
     List<Widget> _columns = new List();
+
     for (int i = 1; i < noOfBoards + 1; i++) {
-          _columns.add(new Board(boardNumber: i));
+      _columns.add(new Board(boardNumber: i));
     }
-      return _columns;
+    return _columns;
   }
 
   void initState() {
@@ -39,25 +49,28 @@ class _DisplayBoardInfoState extends State<DisplayBoardInfo> {
     return Column(
       children: <Widget>[
           Card(
-//            child: RaisedButton(
-//              onPressed: () {
-//                _createBoardInfo(context);
-//              },
-//              child: Text('Generate Boards'),
-//            )
             child: LimitedBox(
               //child: Board(boardNumber: 1),
               maxHeight: 700,
-              child: ListView(
-                //scrollDirection: Axis.horizontal,
-                children: _createBoardInfo(),
+              child: NotificationListener<ValueNotification>(
+                child: ListView(
+                  children: _createBoardInfo(),
+                ),
+                onNotification: (notification) {
+                  print("Noti:" + notification.board.toJson().toString());
+                  boards.add(notification.board);
+                  return true;
+                },
               ),
             ),
           ),
           RaisedButton(
-              child: Text('Confirm'),
+              child: Text('Done'),
               onPressed: () async {
-                var response = await _makePostRequest();
+                ParlourJSON parlour = ParlourJSON(
+                    parlourDetails, ownerDetails, locationDetails, boards,
+                    _tag);
+                var response = await _makePostRequest(parlour);
                 setState(() {
                   //var response = sendDataToServer();
 
@@ -69,50 +82,13 @@ class _DisplayBoardInfoState extends State<DisplayBoardInfo> {
       ],
     );
   }
-  _makePostRequest() async {
+
+  _makePostRequest(parlour) async {
     // set up POST request arguments
     String url = 'https://virtserver.swaggerhub.com/SacredMinds/SnookerBooker/1.0.0/parlour';
     Map<String, String> headers = {"Content-type": "application/json"};
-    String json = '''{
-  "parlourName": "Frames Parlour,Snooker Den",
-  "description": "Parlour description",
-  "mailId": "string",
-  "phoneNo": "string",
-  "location": {
-    "locationId": 0,
-    "addressLine1": "string",
-    "addressLine2": "string",
-    "city": "string",
-    "state": "string",
-    "gps": {
-      "latitude": 0,
-      "longitude": 0
-    }
-  },
-  "owner": {
-    "firstName": "string",
-    "lastName": "string",
-    "email": "string",
-    "phoneNo": "string"
-  },
-  "boards": [
-    {
-      "category": 0,
-      "pricePerHour": 0,
-      "name": "Board1,Board2",
-      "description": "Description about the board",
-      "photoUrls": [
-        "string"
-      ]
-    }
-  ],
-  "tags": [
-    {
-      "id": 0,
-      "name": "English"
-    }
-  ]
-}''';
+    String json = parlour.toJson().toString();
+    print("Final JSON:" + json);
     // make POST request
     Response response = await post(url, headers: headers, body: json);
     // check the status code for the result

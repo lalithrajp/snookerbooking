@@ -9,7 +9,7 @@ part 'parlour_json.g.dart';
 /// JSON serialization logic to be generated.
 @JsonSerializable(explicitToJson: true)
 class ParlourJSON {
-  ParlourJSON(this.p_details, this.o_details, this.locationJSON, this.gps,
+  ParlourJSON(this.p_details, this.o_details, this.locationJSON,
       this.boards, this.tags);
 
   ParlourDetailsJSON p_details;
@@ -33,13 +33,16 @@ class ParlourJSON {
 
 @JsonSerializable()
 class ParlourDetailsJSON {
-  ParlourDetailsJSON(
-      this.parlourName, this.description, this.pmailId, this.phoneNo);
+  ParlourDetailsJSON(this.parlourName, this.description, this.pmailId,
+      this.phoneNo, this.startTime, this.endTime, this.boardCount);
 
   String parlourName;
   String description;
   String pmailId;
   String phoneNo;
+  String startTime;
+  String endTime;
+  int boardCount;
 
   factory ParlourDetailsJSON.fromJson(Map<String, dynamic> json) =>
       _$ParlourDetailsJSONFromJson(json);

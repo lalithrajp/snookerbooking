@@ -13,14 +13,18 @@ class ParlourDetails extends StatefulWidget {
 }
 
 class _ParlourDetailsState extends State<ParlourDetails> {
-  _ParlourDetailsState(this.owner);
+  _ParlourDetailsState(this._ownerDetails);
 
-  OwnerDetailsJSON owner;
+  OwnerDetailsJSON _ownerDetails;
   bool _autoValidate = false;
   final _formKey = GlobalKey<FormState>();
-  String _parlourName, _description, _pmailId, _phoneNo;
+  String _parlourName, _description, _pmailId, _phoneNo, _startTime, _endTime;
+  int _boardCount;
   int _locationId = 0;
-  String _addressLine1, _addressLine2, _city, _state;
+  String _addressLine1,
+      _addressLine2,
+      _city = "Hyderabad",
+      _state;
   GPSJSON _gpsLocation;
 
   @override
@@ -33,7 +37,7 @@ class _ParlourDetailsState extends State<ParlourDetails> {
           //mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'Parlour Details' + owner.toJson().toString(),
+              'Parlour Details' + _ownerDetails.toJson().toString(),
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(fontWeight: FontWeight.bold),
@@ -145,8 +149,31 @@ class _ParlourDetailsState extends State<ParlourDetails> {
                 onSaved: (String value) {
                   _addressLine2 = value;
                 },
-                validator: _validateAddress,
+                //validator: _validateAddress,
               ),
+            ),
+            Row(
+              children: <Widget>[
+                DropdownButton<String>(
+                  value: _city,
+                  elevation: 4,
+                  style: TextStyle(color: Colors.black, fontSize: 30),
+                  isDense: false,
+                  iconSize: 30.0,
+                  onChanged: (String newValue) {
+                    setState(() {
+                      _city = newValue;
+                    });
+                  },
+                  items: <String>['Hyderabad', 'Bangalore', 'Tirupati']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                ),
+              ],
             ),
             RaisedButton(
               child: Text('Next'),
@@ -157,7 +184,13 @@ class _ParlourDetailsState extends State<ParlourDetails> {
                   form.save();
                   ParlourDetailsJSON _parlourDetails =
                   ParlourDetailsJSON(
-                      _parlourName, _description, _pmailId, _phoneNo);
+                      _parlourName,
+                      _description,
+                      _pmailId,
+                      _phoneNo,
+                      _startTime,
+                      _endTime,
+                      _boardCount);
                   LocationJSON _locationDetails = LocationJSON(
                       _locationId, _addressLine1, _addressLine2, _city, _state,
                       _gpsLocation);
@@ -166,7 +199,8 @@ class _ParlourDetailsState extends State<ParlourDetails> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) =>
-                        PreBoard(_parlourDetails, _locationDetails)),
+                        PreBoard(
+                            _ownerDetails, _parlourDetails, _locationDetails)),
                   );
                 } else {
                   setState(() => _autoValidate = true);
@@ -220,6 +254,9 @@ class _ParlourDetailsState extends State<ParlourDetails> {
   }
 
   String _validateAddress(String value) {
+    if (_gpsLocation == null) {
+      return "Select GPS Location";
+    }
     if (value.isEmpty) {
       return "Enter Valid Address";
     }
